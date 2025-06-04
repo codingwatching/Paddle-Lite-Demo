@@ -1,7 +1,7 @@
 #!/bin/bash
-MODEL_NAME=PP-OCRv4_mobile
+MODEL_NAME=PP-OCRv5_mobile
 ASSETS_DIR="$(pwd)/../../../assets"
-MODEL_LIST="PP-OCRv3_mobile PP-OCRv4_mobile"
+MODEL_LIST="PP-OCRv3_mobile PP-OCRv4_mobile PP-OCRv5_mobile"
 
 if [ -n "$1" ]; then
   MODEL_NAME="$1"
@@ -13,14 +13,22 @@ if ! echo "$MODEL_LIST" | grep -qw "$MODEL_NAME"; then
   exit 1
 fi
 
-if [ ! -f "${ASSETS_DIR}/models/${MODEL_NAME}_det.nb" ];then
+if [ ! -f "${ASSETS_DIR}/models/${MODEL_NAME}_det.nb" ] && [ ! -f "./ppocr_demo/models/${MODEL_NAME}_det.nb" ];then
   echo "Model ${MODEL_NAME}_det not found! "
   exit 1
 fi
 
-if [ ! -f "${ASSETS_DIR}/models/${MODEL_NAME}_rec.nb" ];then
+if [ ! -f "${ASSETS_DIR}/models/${MODEL_NAME}_rec.nb" ] && [ ! -f "./ppocr_demo/models/${MODEL_NAME}_rec.nb" ];then
   echo "Model ${MODEL_NAME}_rec not found! "
   exit 1
+fi
+
+if [[ "$MODEL_NAME" == *"PP-OCRv5_mobile"* ]]; then
+  CLS_MODEL_FILE="PP-LCNet_x0_25_textline_ori.nb"
+  LABEL_FILE="ppocr_keys_ocrv5.txt"
+else
+  CLS_MODEL_FILE="ch_ppocr_mobile_v2.0_cls_slim_opt.nb"
+  LABEL_FILE="ppocr_keys_v1.txt"
 fi
 
 # push
@@ -39,10 +47,10 @@ adb shell "cd ${ppocr_demo_path} \
            && ./ppocr_demo \
                 \"./models/${MODEL_NAME}_det.nb\" \
                 \"./models/${MODEL_NAME}_rec.nb\" \
-                ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
+                ./models/${CLS_MODEL_FILE} \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt \
+                ./labels/${LABEL_FILE} \
                 ./config.txt"
 
 adb pull ${ppocr_demo_path}/test_img_result.jpg .
