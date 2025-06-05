@@ -1,6 +1,6 @@
 #!/bin/bash
-MODEL_NAME=PP-OCRv4_mobile
-MODEL_LIST="PP-OCRv3_mobile PP-OCRv4_mobile"
+MODEL_NAME=PP-OCRv5_mobile
+MODEL_LIST="PP-OCRv3_mobile PP-OCRv4_mobile PP-OCRv5_mobile"
 
 if [ -n "$1" ]; then
   MODEL_NAME="$1"
@@ -14,7 +14,8 @@ fi
 
 IMAGES_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/images/images.tar.gz"
 LABELS_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/labels/labels.tar.gz"
-CLS_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_cls_slim_opt_for_cpu_v2_10_rc.tar.gz"
+CLS_MODEL_V2_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_cls_slim_opt_for_cpu_v2_10_rc.tar.gz"
+CLS_MODEL_V3_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/ocr/models/PP-LCNet_x0_25_textline_ori.tar.gz"
 DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/ocr/models/${MODEL_NAME}_det.tar.gz"
 REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/paddle-x/ocr/models/${MODEL_NAME}_rec.tar.gz"
 CONFIG_TXT_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/config.tar.gz"
@@ -45,7 +46,9 @@ download_and_uncompress() {
   cd ..
 }
 
-download_and_uncompress "${CLS_MODEL_URL}" "${MODELS_DIR}"
+download_and_uncompress "${CONFIG_TXT_URL}" "$(pwd)"
+download_and_uncompress "${CLS_MODEL_V2_URL}" "${MODELS_DIR}"
+download_and_uncompress "${CLS_MODEL_V3_URL}" "${MODELS_DIR}"
 download_and_uncompress "${DET_MODEL_URL}" "${MODELS_DIR}"
 download_and_uncompress "${REC_MODEL_URL}" "${MODELS_DIR}"
 download_and_uncompress "${IMAGES_URL}" "${IMAGES_DIR}"
